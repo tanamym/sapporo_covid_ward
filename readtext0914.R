@@ -45,10 +45,19 @@ repeat{
              Date2=str_sub(D,-5,-1),
              Date1=str_remove(Date1,"～"),
              Date2=str_remove(Date2,"～"))%>%
-      mutate(Date1=paste0("2021年",Date1),
-             Date2=paste0("2021年",Date2))%>%
-      mutate(Date1=as.Date(Date1,"%Y年%m月%d日"),
-             Date2=as.Date(Date2,"%Y年%m月%d日"))
+      mutate(Date1=paste0("2021/",Date1),
+             Date2=paste0("2021/",Date2),
+             Date1=str_replace_all(Date1,"月","/"),
+             Date1=str_remove_all(Date1,"日"),
+             Date2=str_replace_all(Date2,"月","/"),
+             Date2=str_remove_all(Date2,"日"))%>%
+      select(D,Date1,Date2,区名,count)%>%
+      mutate(D=str_replace_all(D,"月|年","/"),
+             D=str_remove_all(D,"日"),
+             D=paste0("2021/",D),
+             D=str_replace(D,"～","～2021/"))
+      # mutate(Date1=as.Date(Date1,"%Y年%m月%d日"),
+      #        Date2=as.Date(Date2,"%Y年%m月%d日"))
     data2<-data.frame()
     data2<-read.csv("札幌市区別データ.csv",encoding="UTF-8")%>%
       arrange(desc(Date1))
