@@ -39,6 +39,7 @@ repeat{
       filter(!str_detect(count,"\\(.+?\\)"))%>%
       mutate(count=str_remove_all(count," "))
     data1<-cbind(K,N)%>%
+      mutate(count=ifelse(count=="1~4","4",count))%>%
       mutate(count=as.numeric(count))%>%
       mutate(D=date$Date[1])%>%
       mutate(Date1=str_sub(D,1,5),
