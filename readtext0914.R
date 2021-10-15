@@ -58,17 +58,22 @@ repeat{
              D=str_replace(D,"～","～2021/"))
       # mutate(Date1=as.Date(Date1,"%Y年%m月%d日"),
       #        Date2=as.Date(Date2,"%Y年%m月%d日"))
+    # data3<-rbind(read.csv("札幌市区別データ2021-09-13.csv"),
+    #              read.csv("札幌市区別データ2021-09-20.csv"),
+    #              read.csv("札幌市区別データ2021-09-27.csv"))
     data2<-data.frame()
-    data2<-read.csv("札幌市区別データ.csv",encoding="UTF-8")%>%
-      arrange(desc(Date1))
-    if(data1[1,4]!=data2[1,4]){
-      data3<-rbind(data2,data1)
+    data2<-read.csv("札幌市区別データ2.csv",encoding="UTF-8")%>%
+      mutate(D2=as.Date(Date1))%>%
+      arrange(desc(D2))
+    if(data1[1,1]!=data2[1,1]){
+      data3<-rbind(data2%>%select(-D2),data1)
       write.csv(data3,"札幌市区別データ2.csv",
                 row.names=F,fileEncoding="UTF-8")
       write.csv(data1,paste0("札幌市区別データ",Sys.Date(),".csv"),
                 row.names=F)
+      print("出力しました")
     }
-    
-    sleep(3600)
+    print(Sys.time())
+    Sys.sleep(3600)
   }
 }
