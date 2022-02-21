@@ -1,6 +1,7 @@
 library(rvest)
 library(dplyr)
 library(stringr)
+library(stringi)
 library(lubridate)
 repeat{
   while(wday(Sys.Date(),label = TRUE)=="月"){
@@ -35,19 +36,21 @@ repeat{
       data.frame()
     colnames(N)<-"count"  
     N<-N%>%
+      mutate(count=stri_trans_nfkc(count))%>%
       filter(str_detect(count,"[0-9]"))%>%
       filter(!str_detect(count,"\\(.+?\\)"))%>%
       mutate(count=str_remove_all(count," "))
     data1<-cbind(K,N)%>%
       mutate(count=ifelse(count=="1~4","4",count))%>%
+      mutate(count=str_remove(count,","))%>%
       mutate(count=as.numeric(count))%>%
       mutate(D=date$Date[1])%>%
       mutate(Date1=str_sub(D,1,5),
-             Date2=str_sub(D,-5,-1),
+             Date2=str_sub(D,-6,-1),
              Date1=str_remove(Date1,"～"),
              Date2=str_remove(Date2,"～"))%>%
-      mutate(Date1=paste0("2021/",Date1),
-             Date2=paste0("2021/",Date2),
+      mutate(Date1=paste0("2022/",Date1),
+             Date2=paste0("2022/",Date2),
              Date1=str_replace_all(Date1,"月","/"),
              Date1=str_remove_all(Date1,"日"),
              Date2=str_replace_all(Date2,"月","/"),
@@ -55,8 +58,8 @@ repeat{
       select(D,Date1,Date2,区名,count)%>%
       mutate(D=str_replace_all(D,"月|年","/"),
              D=str_remove_all(D,"日"),
-             D=paste0("2021/",D),
-             D=str_replace(D,"～","～2021/"))
+             D=paste0("2022/",D),
+             D=str_replace(D,"～","～2022/"))
       # mutate(Date1=as.Date(Date1,"%Y年%m月%d日"),
       #        Date2=as.Date(Date2,"%Y年%m月%d日"))
     # data3<-rbind(read.csv("札幌市区別データ2021-09-13.csv"),
